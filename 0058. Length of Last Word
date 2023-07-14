@@ -1,0 +1,32 @@
+int lengthOfLastWord(char * s){
+    int i = strlen(s) - 1;
+    if((i+1)==1){
+        if(s[0] == ' '){return 0;}
+        else{return 1;}
+    }
+    while(s[i] == ' '){
+        i--;
+        if(i < 0){return 0;}
+    }
+    int count = 0;
+    for(;s[i]!=' ';i--){
+        count++;
+        if(i == 0){return count;}
+    }
+    return count;
+}
+
+// give a string s consisting of words and spaces.
+// return the length of the last word in the string. 
+// A Word is a maximal substring consisting of non-space characters only.
+
+//  ['H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '\0'] i = strlen(s)
+//                                                            ^ i  search (i--) until s[i] != ' ';
+
+//  ['H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '\0']
+//                                                      ^         int count = 0, search until s[i] == ' ' or i < 0; (i--, count++)
+
+//  ['H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '\0']
+//                             ^    5    4    3    2    1         search until s[i] == ' ';
+
+// return count
