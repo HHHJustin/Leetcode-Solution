@@ -1,0 +1,78 @@
+typedef struct stack stack_t;
+
+struct stack{
+    // size_t size;
+    size_t capacity;
+    size_t top;
+    char *elements;
+};
+
+// stack need 1.size(current size) 2.capacity 3. top(index) 4. pointer to array
+// in this problem we need stacknew(), stack_delete(), pop(), push(), isempty(), stack_peek()
+
+void push(stack_t *self, int data){
+    self->elements[self->top] = data;
+    self->top++;
+}
+
+bool isempty(stack_t *self){
+    assert(self);
+    return self->top == 0;
+}
+
+char pop(stack_t *self){
+    self->top--;
+    return self->elements[self->top];
+}
+
+bool isValid(char * s){
+    // construct a stack
+    stack_t *stack_ = malloc(sizeof(stack_t));
+    // s->size = 0;
+    stack_->capacity = strlen(s);
+    stack_->top = 0;
+    stack_->elements = (char *)malloc(stack_->capacity * sizeof(char));
+
+    for(int i=0; s[i]!='\0';i++){
+        if((s[i]=='(') || (s[i]=='{') || (s[i]=='[')){
+            push(stack_, s[i]);
+        }
+        else{
+            if(!isempty(stack_)){
+                switch(s[i]){
+                    case ')':
+                    if(pop(stack_)!='('){return false;}
+                    break;
+                    case ']':
+                    if(pop(stack_)!='['){return false;}
+                    break;
+                    case '}':
+                    if(pop(stack_)!='{'){return false;}
+                    break;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+    }
+    if(stack_->top != 0){return false;}
+    return true;
+}   
+
+// give a string containing just the characters '(', ')', '{', '}', '[', ']'
+// determine if the input string is valid.
+// if the input is valid
+// 1. open brackets must be closed by same type of brackets.
+// 2. open brackets must be closed in the correct order.
+// 3. every close bracket has a corresponding open bracket of the same type.
+
+// ex: s = "( ) [ ] { }" use a stack to record the ever appear characters. 
+//          ^ i          char stack -> size = s.length;
+//                       if s[i] == ( or { or [ -> push in stack stack : (
+//                       else if: check the top of stack 
+//                              if empty -> return false
+//                              if s[i] == ( : check if stack top == ) -> if not return false, else pop
+//                              if s[i] == { : check if stack top == } -> if not return false, else pop
+//                              if s[i] == [ : check if stack top == ] -> if not return false, else pop
+//                          
