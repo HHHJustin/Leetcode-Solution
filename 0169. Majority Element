@@ -1,0 +1,36 @@
+int majorityElement(int* nums, int numsSize){
+    int count = 0;
+    int out = nums[0];
+    for(int i=0;i<numsSize;i++){
+        if(count==0){
+            count++;
+            out = nums[i];
+        }
+        else{
+            if(out == nums[i]){
+                count++;
+            }
+            else{count--;}
+        }
+    }
+    return out;
+}
+
+// give a integer array nums
+// size = numsSize
+// find the majority element
+// The point: The majority element is the element that appears more than ⌊n / 2⌋ times. 
+// ex: if numsSize = 3 → majority element appear > ⌊3 / 2⌋ (1) = 2 times
+
+// Sorting method
+// ex: [1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 8] → if it's the majority element, it will at middle of the sorted array. 
+// time complexity: O(nlogn), space complexity O(1) (quick sort)
+
+// Moore voting algorithm
+// a pointer to scan array and set a count to record the candicate element.
+// [A A C C B B B A A C C C] count = 0, int out = nums[0] p:pointer
+//  ^                        if count = 0, count++, out = nums[p], p++ 
+// [A A C C B B B A A C C C] 
+//    ^                      if count > 0, and out == nums[p] → count++
+// [A A C C B B B A A C C C] count = 2
+//      ^                    if count > 0, and out != nums[p] → count--
