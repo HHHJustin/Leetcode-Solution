@@ -1,0 +1,113 @@
+struct stack{
+    size_t capacity;
+    size_t top;
+    char *elements;
+};
+
+// bool isempty(struct stack *self){
+//     assert(self);
+//     return self->top == 0;
+// }
+
+char pop(struct stack *self){
+    (self->top)--;
+    return self->elements[self->top];
+}
+
+void push(struct stack *self, char data){
+    self->elements[self->top] = data;
+    (self->top)++;
+}
+
+
+char * simplifyPath(char * path){
+    int length = strlen(path);
+
+    struct stack *output = (struct stack*)malloc(sizeof(struct stack));
+    output->capacity = length;
+    output->top = 0;
+    output->elements = (char *)malloc((output->capacity + 1) * sizeof(char));
+
+    output->top++;
+    output->elements[0] = '/';
+    char compare1[] = "..";
+    char compare2[] = ".";
+    struct stack *temp = malloc(sizeof(struct stack)); 
+    temp->capacity = length;
+    temp->top = 0;
+    temp->elements = (char *)malloc(output->capacity);
+    for(int i=1 ; i<length ; i++){
+        if(path[i] != '/'){
+            push(output, path[i]);
+            push(temp, path[i]);
+        }
+        else if(path[i] == '/' && output->elements[output->top - 1] != '/'){
+            temp->elements[temp->top] = '\0';
+            if(strcmp(temp->elements, compare1) == 0){
+                int count = 0;
+                char o;
+                while((output->top) > 0){
+                    o = pop(output);
+                    if(o == '/' && count == 0){count++;}
+                    else if(o == '/' && count == 1){break;}
+                }
+                if(output->top == 0){output->top++;output->elements[0] = '/';}
+            }
+            else if(strcmp(temp->elements, compare2) == 0 && output->top > 1){
+                pop(output);
+            }
+            if(output->elements[output->top - 1]!='/'){push(output, '/');}
+            temp->top = 0;
+        }
+        if(path[i] == '/' && i == length - 1 && output->top != 1){pop(output);}
+    }
+    temp->elements[temp->top] = '\0';
+    if(strcmp(temp->elements, compare1) == 0){
+        int count = 0;
+        char o;
+        while((output->top) > 0){
+            o = pop(output);
+            if(o == '/' && count == 0){count++;}
+            else if(o == '/' && count == 1){break;}
+        }
+        if(output->top == 0){output->top++;output->elements[0] = '/';}
+    }
+    else if(strcmp(temp->elements, compare2) == 0 && output->top > 1){
+        pop(output);
+        pop(output);
+        if(output->top == 0){output->top++;output->elements[0] = '/';}
+    }
+
+    output->elements[output->top] = '\0';
+    return output->elements;
+}
+
+// give 1 string "path" ,which is an absolute path(starting with a slash '/') to a file or directory in a Unix-style file system,
+// convert it ti the simplified canonical path
+
+// '.' refers to the current directory.
+// '..' refers to the directory up a level.
+// multiple consecutive slashes (i.e.'//') are treated as 1 single slash '/'.
+// For this problem -> other format of periods such as '...' are treated as file/directory names.
+
+// canonical path should have the following format:
+// The path starts with a single slash '/'
+// Any 2 directories are separated by a single slash '/'.
+// The path does not end with a trailing '/'.
+// The path only contains the directories on the path from the root directory to the target file or directory(i.e. no period '.' or doubel period '..')
+
+// Return the simplified canonical path.
+
+// ex: "/home/"  temp: ""  output: "" use 1 stack to save the output another save the temp string. 
+//      ^        
+// ex: "/home/"  temp: "/" -> if(path[i] == '/') -> check if stack size > 1 -> check top == '/' -> i++ else: push to stack
+//      ^ i   
+// ex: "/home/"  temp: "/home" -> if(path[i] == '/' && i == strlen(path) - 1) -> don't push to stack
+//           ^ i          
+
+// ex: "/../" temp: ""
+//      ^
+// ex: "/../" temp: "/" -> push path[i] to stack until path[i] == '/'
+//       ^
+// ex: "/../" temp: ".." -> if temp == ".." -> pop output until output[top] == '/' || top == 1
+//         ^
